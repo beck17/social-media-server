@@ -30,4 +30,7 @@ export class UserModel extends TimeStamps {
 
 	@prop({ default: [], ref: () => UserModel })
 	friends: Ref<UserModel>[]
+
+	@prop()
+	postCount?: number
 }

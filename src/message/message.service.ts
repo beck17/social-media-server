@@ -35,7 +35,7 @@ export class MessageService {
 		})
 
 		return this.ConversationService.pushNewMessage(
-			conversationId,
+			new Types.ObjectId(conversationId),
 			newMessage._id,
 		)
 	}
@@ -44,5 +44,3 @@ export class MessageService {
 		return this.MessageModel.findByIdAndDelete(id).exec()
 	}
 }
-
-// TODO: Сделать сервис для удаления сообщений из диалога

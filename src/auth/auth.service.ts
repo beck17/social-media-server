@@ -47,11 +47,17 @@ export class AuthService {
 			firstName: dto.firstName,
 			lastName: dto.lastName,
 			password: await hash(dto.password, salt),
+			avatar: '/uploads/default/no-avatar.jpg',
+			backgroundPic: '/uploads/default/background.jpg',
+			friends: [],
+			postCount: 0,
 		})
 
 		await newUser.save()
 
-		return this.returnUserFields(newUser)
+		return {
+			user: this.returnUserFields(newUser),
+		}
 	}
 
 	async login(dto: LoginDto) {
@@ -68,10 +74,10 @@ export class AuthService {
 	// Валидация юзера
 	async validateUser(dto: LoginDto) {
 		const user = await this.UserModel.findOne({ phoneNumber: dto.phoneNumber })
-		if (!user) throw new UnauthorizedException('Неверный логин или пароль')
+		if (!user) throw new UnauthorizedException('Неверный номер или пароль')
 
 		const isValidPassword = await compare(dto.password, user.password)
-		if (!isValidPassword) new UnauthorizedException('Неверный логин или пароль')
+		if (!isValidPassword) new UnauthorizedException('Неверный номер или пароль')
 
 		return user
 	}

@@ -3,12 +3,15 @@ import { InjectModel } from 'nestjs-typegoose'
 import { ConversationModel } from './conversation.model'
 import { ModelType } from '@typegoose/typegoose/lib/types'
 import { Types } from 'mongoose'
+import { MessageModel } from '../message/message.model'
 
 @Injectable()
 export class ConversationService {
 	constructor(
 		@InjectModel(ConversationModel)
 		private readonly ConversationModel: ModelType<ConversationModel>,
+		@InjectModel(MessageModel)
+		private readonly MessageModel: ModelType<MessageModel>,
 	) {}
 
 	async getById(id: Types.ObjectId) {
@@ -20,7 +23,24 @@ export class ConversationService {
 			.exec()
 	}
 
-	async createConversation() {
+	async createConversation(userId: Types.ObjectId, withUserId: Types.ObjectId) {
+		let message = await this.MessageModel.findOne({
+			userTo: userId,
+			userFrom: withUserId,
+		})
+
+		if (!message) {
+			// @ts-ignore
+			message = await this.MessageModel.findOne({
+				userTo: withUserId,
+				userFrom: userId,
+			})
+		}
+
+		if (message) {
+			return this.ConversationModel.findOne({ messages: message._id })
+		}
+
 		return this.ConversationModel.create({
 			messages: [],
 		})

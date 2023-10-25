@@ -14,8 +14,17 @@ export class PostService {
 
 	async getAllPosts() {
 		return this.PostModel.find()
-			.sort({ created_at: 'desc' })
+			.sort({ createdAt: -1 })
 			.populate('user', 'firstName lastName avatar')
+			.populate('comments', '_id')
+			.exec()
+	}
+
+	async getUserPosts(userId: Types.ObjectId) {
+		return this.PostModel.find({ user: userId })
+			.sort({ createdAt: -1 })
+			.populate('user', 'firstName lastName avatar')
+			.populate('comments', '_id')
 			.exec()
 	}
 
@@ -24,11 +33,18 @@ export class PostService {
 	}
 
 	async createPost(userId: Types.ObjectId, dto: PostDto) {
-		return this.PostModel.create({
-			user: userId,
-			text: dto.text,
-			image: dto.image,
-		})
+		if (dto.image) {
+			return this.PostModel.create({
+				user: userId,
+				text: dto.text,
+				image: dto.image,
+			})
+		} else {
+			return this.PostModel.create({
+				user: userId,
+				text: dto.text,
+			})
+		}
 	}
 
 	async deletePostById(postId: Types.ObjectId) {
@@ -38,10 +54,12 @@ export class PostService {
 	}
 
 	async updatePost(postId: Types.ObjectId, dto: PostDto) {
-		return this.PostModel.findByIdAndUpdate(postId, {
-			text: dto.text,
-			image: dto.image,
-		})
+		const post = await this.getPostByUserId(postId)
+
+		if (dto.text) post.text = dto.text
+		if (dto.image) post.image = dto.image
+
+		return post.save()
 	}
 
 	async pushComment(postId, commentId) {

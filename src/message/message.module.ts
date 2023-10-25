@@ -5,6 +5,7 @@ import { TypegooseModule } from 'nestjs-typegoose'
 import { MessageModel } from './message.model'
 import { ConversationModel } from '../conversation/conversation.model'
 import { ConversationService } from '../conversation/conversation.service'
+import { MessageGateway } from './message.gateway'
 
 @Module({
 	imports: [
@@ -20,6 +21,7 @@ import { ConversationService } from '../conversation/conversation.service'
 		]),
 	],
 	controllers: [MessageController],
-	providers: [MessageService, ConversationService],
+	providers: [MessageService, ConversationService, MessageGateway],
+	exports: [MessageService],
 })
 export class MessageModule {}

@@ -1,5 +1,4 @@
 import { IsString } from 'class-validator'
-import { Types } from 'mongoose'
 import { IsObjectId } from 'class-validator-mongo-object-id'
 
 export class MessageDto {
@@ -7,8 +6,11 @@ export class MessageDto {
 	text: string
 
 	@IsObjectId()
-	userTo: Types.ObjectId
+	userTo: string
 
 	@IsObjectId()
-	conversationId: Types.ObjectId
+	userFrom: string
+
+	@IsObjectId()
+	conversationId: string
 }

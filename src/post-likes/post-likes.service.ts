@@ -12,27 +12,35 @@ export class PostLikesService {
 		private readonly PostLikeModel: ModelType<PostLikeModel>,
 	) {}
 
-	async isExists(userId: Types.ObjectId, { postId }: PostLikeDto) {
-		return this.PostLikeModel.exists({ user: userId, post: postId }).exec()
+	async isExists(userId: Types.ObjectId, postId: Types.ObjectId) {
+		const liked = await this.PostLikeModel.exists({
+			user: userId,
+			post: postId,
+		}).exec()
+		return !!liked
 	}
 
-	async createLike(userId: Types.ObjectId, { postId }: PostLikeDto) {
-		// const checkLike = await this.PostLikeModel.findOne({
-		// 	user: userId,
-		// 	post: postId,
-		// }).exec()
-		// if (checkLike) throw new Error('')
+	async getCount(postId: Types.ObjectId) {
+		const count = await this.PostLikeModel.find({ post: postId }).exec()
+		return count.length
+	}
+
+	async toggleLike(userId: Types.ObjectId, { postId }: PostLikeDto) {
+		const liked = await this.PostLikeModel.exists({
+			user: userId,
+			post: postId,
+		}).exec()
+
+		if (!!liked) {
+			return this.PostLikeModel.findOneAndDelete({
+				user: userId,
+				post: postId,
+			}).exec()
+		}
 
 		return this.PostLikeModel.create({
 			user: userId,
 			post: postId,
 		})
-	}
-
-	async deleteLike(userId: Types.ObjectId, { postId }: PostLikeDto) {
-		return this.PostLikeModel.findOneAndDelete({
-			user: userId,
-			post: postId,
-		}).exec()
 	}
 }

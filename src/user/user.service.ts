@@ -13,22 +13,9 @@ export class UserService {
 	) {}
 
 	async getProfile(_id: Types.ObjectId) {
-		return this.UserModel.aggregate()
-			.match({ _id })
-			.lookup({
-				from: 'post',
-				foreignField: 'user',
-				localField: '_id',
-				as: 'posts',
-			})
-			.addFields({
-				postCount: {
-					$size: '$posts',
-				},
-			})
-			.project({ __v: 0, posts: 0 })
+		return this.UserModel.findById(_id)
+			.populate('friends', 'firstName lastName avatar')
 			.exec()
-			.then((data) => data[0])
 	}
 
 	async getById(id: Types.ObjectId) {
@@ -80,6 +67,15 @@ export class UserService {
 		return true
 	}
 
+	async isFriend(userId: Types.ObjectId, friendId: Types.ObjectId) {
+		const user = await this.UserModel.findOne({
+			_id: userId,
+			friends: friendId,
+		})
+
+		return !!user
+	}
+
 	async searchProfile(search: string) {
 		return this.UserModel.find({
 			$or: [
@@ -91,7 +87,7 @@ export class UserService {
 				},
 			],
 		})
-			.select('firstName lastName')
+			.select('firstName lastName avatar')
 			.sort('desc')
 			.exec()
 	}

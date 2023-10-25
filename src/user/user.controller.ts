@@ -44,9 +44,9 @@ export class UserController {
 	@HttpCode(200)
 	async removeFromFriend(
 		@CurrentUser('_id') userId: Types.ObjectId,
-		@Param('friendId') friendIs: Types.ObjectId,
+		@Param('friendId') friendId: Types.ObjectId,
 	) {
-		return this.UserService.removeFromFriend(userId, friendIs)
+		return this.UserService.removeFromFriend(userId, friendId)
 	}
 
 	@Put()
@@ -56,6 +56,15 @@ export class UserController {
 		@Body() dto: UserDto,
 	) {
 		return this.UserService.updateProfile(id, dto)
+	}
+
+	@Get('friend/:friendId')
+	@Auth()
+	async isFriend(
+		@CurrentUser('_id') id: Types.ObjectId,
+		@Param('friendId') friendId: Types.ObjectId,
+	) {
+		return this.UserService.isFriend(id, friendId)
 	}
 
 	@Get('search/:search')

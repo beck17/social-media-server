@@ -21,5 +21,6 @@ import { PostModel } from '../post/post.model'
 	],
 	controllers: [PostCommentsController],
 	providers: [PostCommentsService, PostService],
+	exports: [PostCommentsService],
 })
 export class PostCommentsModule {}

@@ -27,6 +27,12 @@ export class PostController {
 	}
 
 	@Auth()
+	@Get('/user/:userId')
+	async getUserPosts(@Param('userId') userId: Types.ObjectId) {
+		return this.PostService.getUserPosts(userId)
+	}
+
+	@Auth()
 	@Get(':postId')
 	async getPostById(@Param('postId') postId: Types.ObjectId) {
 		return this.PostService.getPostByUserId(postId)

@@ -18,7 +18,7 @@ export class PostCommentsService {
 	async getCommentsByPostId(postId: Types.ObjectId) {
 		return this.PostCommentsModel.find({ postId }, '-__v')
 			.sort({ crated_at: 'desc' })
-			.populate('user', 'firstName lastName')
+			.populate('user', 'firstName lastName avatar')
 			.exec()
 	}
 
@@ -34,7 +34,7 @@ export class PostCommentsService {
 
 		await this.PostService.pushComment(postId, comment._id)
 
-		return comment
+		return comment.populate('user', 'firstName lastName avatar')
 	}
 
 	async updateComment(commentId: Types.ObjectId, dto: UpdatePostCommentsDto) {
@@ -45,6 +45,12 @@ export class PostCommentsService {
 		if (!comment) throw new Error('Коментария не существует')
 
 		return comment
+	}
+
+	async removePostCommentsByPostId(postId: Types.ObjectId) {
+		await this.PostCommentsModel.findByIdAndDelete({ _id: postId })
+
+		return true
 	}
 
 	async deleteComment(commentId: Types.ObjectId) {

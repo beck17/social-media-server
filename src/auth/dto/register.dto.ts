@@ -1,8 +1,8 @@
-import { IsNumber, IsString, MinLength } from 'class-validator'
+import { IsString, MinLength } from 'class-validator'
 
 export class RegisterDto {
-	@IsNumber()
-	phoneNumber: number
+	@IsString()
+	phoneNumber: string
 
 	@IsString()
 	firstName: string

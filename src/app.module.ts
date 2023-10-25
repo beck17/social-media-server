@@ -12,6 +12,7 @@ import { PostLikesModule } from './post-likes/post-likes.module'
 import { MessageModule } from './message/message.module'
 import { UserModule } from './user/user.module'
 import { ConversationModule } from './conversation/conversation.module'
+import { MediaModule } from './media/media.module';
 
 @Module({
 	imports: [
@@ -28,6 +29,7 @@ import { ConversationModule } from './conversation/conversation.module'
 		MessageModule,
 		UserModule,
 		ConversationModule,
+		MediaModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
