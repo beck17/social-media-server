@@ -1,6 +1,18 @@
-import { Controller, Delete, Get, Post, Put } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	HttpCode,
+	Param,
+	Post,
+	Put,
+} from '@nestjs/common';
 import { CommunityService } from './community.service';
 import { Auth } from '../auth/decorators/auth.decorator';
+import { CurrentUser } from '../auth/decorators/user.decorator';
+import { Types } from 'mongoose';
+import { CommunityDto } from './community.dto';
 
 @Controller('community')
 export class CommunityController {
@@ -8,21 +20,38 @@ export class CommunityController {
 
 	@Auth()
 	@Get()
-	getAllCommunities() {}
+	getAllCommunities() {
+		return this.CommunityService.getAllCommunities();
+	}
 
 	@Auth()
-	@Get()
-	getOneCommunity() {}
+	@Get(':communityId')
+	getOneCommunity(@Param('communityId') communityId: Types.ObjectId) {
+		return this.CommunityService.getOneCommunity(communityId);
+	}
 
 	@Auth()
 	@Post()
-	createCommunity() {}
+	@HttpCode(200)
+	createCommunity(
+		@CurrentUser('_id') userId: Types.ObjectId,
+		@Body() dto: CommunityDto,
+	) {
+		return this.CommunityService.createCommunity(userId, dto);
+	}
 
 	@Auth()
-	@Put()
-	updateCommunity() {}
+	@Put(':communityId')
+	updateCommunity(
+		@Param('communityId') communityId: Types.ObjectId,
+		@Body() dto: CommunityDto,
+	) {
+		return this.CommunityService.updateCommunity(communityId, dto);
+	}
 
 	@Auth()
-	@Delete()
-	deleteCommunity() {}
+	@Delete(':communityId')
+	deleteCommunity(@Param('communityId') communityId: Types.ObjectId) {
+		return this.CommunityService.deleteCommunity(communityId);
+	}
 }

@@ -12,9 +12,6 @@ export class CommunityModel extends TimeStamps {
 	@prop()
 	description?: string;
 
-	@prop({ type: Date, default: Date.now })
-	creationDate: Date;
-
 	@prop({ type: String, default: '/uploads/default/no-avatar.jpg' })
 	communityAvatar: string;
 
