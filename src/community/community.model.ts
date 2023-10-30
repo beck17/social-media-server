@@ -15,6 +15,12 @@ export class CommunityModel extends TimeStamps {
 	@prop({ type: Date, default: Date.now })
 	creationDate: Date;
 
+	@prop({ type: String, default: '/uploads/default/no-avatar.jpg' })
+	communityAvatar: string;
+
+	@prop({ type: String, default: '/uploads/default/background.jpg' })
+	communityBackgroundPic: string;
+
 	@prop({ ref: () => UserModel })
 	creator: Ref<UserModel>; // Связь с моделью пользователя (если необходимо)
 
