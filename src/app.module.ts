@@ -13,6 +13,7 @@ import { MessageModule } from './message/message.module'
 import { UserModule } from './user/user.module'
 import { ConversationModule } from './conversation/conversation.module'
 import { MediaModule } from './media/media.module';
+import { CommunityModule } from './community/community.module';
 
 @Module({
 	imports: [
@@ -30,6 +31,7 @@ import { MediaModule } from './media/media.module';
 		UserModule,
 		ConversationModule,
 		MediaModule,
+		CommunityModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
