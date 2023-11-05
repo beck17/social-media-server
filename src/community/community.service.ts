@@ -51,4 +51,18 @@ export class CommunityService {
 		if (!deleteCommunity) throw new NotFoundException('Сообщество не найден');
 		return deleteCommunity;
 	}
+
+	async toggleSubscribe(userId: Types.ObjectId, communityId: Types.ObjectId) {
+		const community = await this.CommunityModel.findById(communityId);
+
+		if (community.members.includes(userId)) {
+			community.members = community.members.filter(
+				(_id) => _id.toString() !== userId.toString(),
+			);
+		} else {
+			community.members.push(userId);
+		}
+
+		return await community.save();
+	}
 }

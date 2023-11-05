@@ -54,4 +54,14 @@ export class CommunityController {
 	deleteCommunity(@Param('communityId') communityId: Types.ObjectId) {
 		return this.CommunityService.deleteCommunity(communityId);
 	}
+
+	@Auth()
+	@Post(':communityId')
+	@HttpCode(200)
+	async toggleSubscribe(
+		@CurrentUser('_id') userId: Types.ObjectId,
+		@Param('communityId') communityId: Types.ObjectId,
+	) {
+		return this.CommunityService.toggleSubscribe(userId, communityId);
+	}
 }
