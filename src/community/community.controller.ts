@@ -31,6 +31,13 @@ export class CommunityController {
 	}
 
 	@Auth()
+	@Get('user/:userId')
+	@HttpCode(200)
+	getUserCommunities(@Param('userId') userId: Types.ObjectId) {
+		return this.CommunityService.getUserCommunities(userId);
+	}
+
+	@Auth()
 	@Post()
 	@HttpCode(200)
 	createCommunity(

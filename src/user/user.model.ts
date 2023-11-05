@@ -1,36 +1,40 @@
-import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses'
-import { prop, Ref } from '@typegoose/typegoose'
+import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
+import { prop, Ref } from '@typegoose/typegoose';
+import { CommunityModel } from '../community/community.model';
 
 export interface UserModel extends Base {}
 
 export class UserModel extends TimeStamps {
 	@prop({ unique: true })
-	phoneNumber: number
+	phoneNumber: number;
 
 	@prop()
-	firstName: string
+	firstName: string;
 
 	@prop()
-	lastName: string
+	lastName: string;
 
 	@prop()
-	password: string
+	password: string;
 
 	@prop()
-	avatar?: string
+	avatar?: string;
 
 	@prop()
-	backgroundPic?: string
+	backgroundPic?: string;
 
 	@prop()
-	city?: string
+	city?: string;
 
 	@prop()
-	birthday?: string
+	birthday?: string;
 
 	@prop({ default: [], ref: () => UserModel })
-	friends: Ref<UserModel>[]
+	friends: Ref<UserModel>[];
+
+	@prop({ default: [], ref: () => CommunityModel })
+	communities: Ref<CommunityModel>[];
 
 	@prop()
-	postCount?: number
+	postCount?: number;
 }

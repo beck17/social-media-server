@@ -4,20 +4,31 @@ import { CommunityModel } from './community.model';
 import { ModelType } from '@typegoose/typegoose/lib/types';
 import { Types } from 'mongoose';
 import { CommunityDto } from './community.dto';
+import { UserModel } from '../user/user.model';
 
 @Injectable()
 export class CommunityService {
 	constructor(
 		@InjectModel(CommunityModel)
 		private readonly CommunityModel: ModelType<CommunityModel>,
+		@InjectModel(UserModel)
+		private readonly UserModel: ModelType<UserModel>,
 	) {}
 
 	async getAllCommunities() {
-		return this.CommunityModel.find().sort({ name: 1 }).exec();
+		return this.CommunityModel.find().sort({ members: -1 }).exec();
 	}
 
 	async getOneCommunity(communityId: Types.ObjectId) {
 		return this.CommunityModel.findById(communityId);
+	}
+
+	async getUserCommunities(userId: Types.ObjectId) {
+		const { communities } = await this.UserModel.findById(userId)
+			.populate('communities', '_id name members communityAvatar')
+			.exec();
+
+		return communities;
 	}
 
 	async createCommunity(userId: Types.ObjectId, dto: CommunityDto) {
@@ -54,15 +65,20 @@ export class CommunityService {
 
 	async toggleSubscribe(userId: Types.ObjectId, communityId: Types.ObjectId) {
 		const community = await this.CommunityModel.findById(communityId);
+		const user = await this.UserModel.findById(userId);
 
 		if (community.members.includes(userId)) {
 			community.members = community.members.filter(
 				(_id) => _id.toString() !== userId.toString(),
 			);
+			user.communities = user.communities.filter(
+				(_id) => _id.toString() !== communityId.toString(),
+			);
 		} else {
 			community.members.push(userId);
+			user.communities.push(communityId);
 		}
-
+		await user.save();
 		return await community.save();
 	}
 }
