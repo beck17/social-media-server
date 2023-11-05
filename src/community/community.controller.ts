@@ -38,6 +38,13 @@ export class CommunityController {
 	}
 
 	@Auth()
+	@Get('search/:search')
+	@HttpCode(200)
+	searchCommunities(@Param('search') search: string) {
+		return this.CommunityService.searchAllCommunities(search);
+	}
+
+	@Auth()
 	@Post()
 	@HttpCode(200)
 	createCommunity(

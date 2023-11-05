@@ -81,4 +81,13 @@ export class CommunityService {
 		await user.save();
 		return await community.save();
 	}
+
+	async searchAllCommunities(search: string) {
+		return this.CommunityModel.find({
+			$or: [{ name: new RegExp(search, 'i') }],
+		})
+			.select('name communityAvatar members')
+			.sort('desc')
+			.exec();
+	}
 }
