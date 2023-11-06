@@ -72,10 +72,20 @@ export class CommunityController {
 	@Auth()
 	@Post(':communityId')
 	@HttpCode(200)
-	async toggleSubscribe(
+	toggleSubscribe(
 		@CurrentUser('_id') userId: Types.ObjectId,
 		@Param('communityId') communityId: Types.ObjectId,
 	) {
 		return this.CommunityService.toggleSubscribe(userId, communityId);
+	}
+
+	@Auth()
+	@Get('userSub/:communityId')
+	@HttpCode(200)
+	isSubscribedUser(
+		@CurrentUser('_id') userId: Types.ObjectId,
+		@Param('communityId') communityId: Types.ObjectId,
+	) {
+		return this.CommunityService.isSubscribedUser(userId, communityId);
 	}
 }

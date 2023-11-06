@@ -90,4 +90,14 @@ export class CommunityService {
 			.sort('desc')
 			.exec();
 	}
+
+	async isSubscribedUser(userId: Types.ObjectId, communityId: Types.ObjectId) {
+		const user = await this.UserModel.findById(userId);
+
+		const isSubscribed = user.communities.filter(
+			(_id) => _id.toString() === communityId.toString(),
+		);
+
+		return isSubscribed.length > 0;
+	}
 }
