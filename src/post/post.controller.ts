@@ -9,12 +9,12 @@ import {
 	Put,
 	UsePipes,
 	ValidationPipe,
-} from '@nestjs/common'
-import { PostService } from './post.service'
-import { Types } from 'mongoose'
-import { Auth } from '../auth/decorators/auth.decorator'
-import { CurrentUser } from '../auth/decorators/user.decorator'
-import { PostDto } from './post.dto'
+} from '@nestjs/common';
+import { PostService } from './post.service';
+import { Types } from 'mongoose';
+import { Auth } from '../auth/decorators/auth.decorator';
+import { CurrentUser } from '../auth/decorators/user.decorator';
+import { PostDto } from './post.dto';
 
 @Controller('post')
 export class PostController {
@@ -23,19 +23,19 @@ export class PostController {
 	@Auth()
 	@Get()
 	async getAllPosts() {
-		return this.PostService.getAllPosts()
+		return this.PostService.getAllPosts();
 	}
 
 	@Auth()
 	@Get('/user/:userId')
 	async getUserPosts(@Param('userId') userId: Types.ObjectId) {
-		return this.PostService.getUserPosts(userId)
+		return this.PostService.getUserPosts(userId);
 	}
 
 	@Auth()
 	@Get(':postId')
 	async getPostById(@Param('postId') postId: Types.ObjectId) {
-		return this.PostService.getPostByUserId(postId)
+		return this.PostService.getPostByUserId(postId);
 	}
 
 	@Post()
@@ -46,7 +46,19 @@ export class PostController {
 		@CurrentUser('_id') userId: Types.ObjectId,
 		@Body() dto: PostDto,
 	) {
-		return this.PostService.createPost(userId, dto)
+		return this.PostService.createPost(userId, dto);
+	}
+
+	@Post('community/:communityId')
+	@UsePipes(new ValidationPipe())
+	@Auth()
+	@HttpCode(200)
+	async createCommunityPost(
+		@CurrentUser('_id') userId: Types.ObjectId,
+		@Param('communityId') communityId: Types.ObjectId,
+		@Body() dto: PostDto,
+	) {
+		return this.PostService.createCommunityPost(userId, communityId, dto);
 	}
 
 	@Delete(':id')
@@ -54,7 +66,7 @@ export class PostController {
 	@Auth()
 	@HttpCode(200)
 	async deletePost(@Param('id') id: Types.ObjectId) {
-		return this.PostService.deletePostById(id)
+		return this.PostService.deletePostById(id);
 	}
 
 	@Put(':postId')
@@ -65,6 +77,6 @@ export class PostController {
 		@Param('postId') postId: Types.ObjectId,
 		@Body() dto: PostDto,
 	) {
-		return this.PostService.updatePost(postId, dto)
+		return this.PostService.updatePost(postId, dto);
 	}
 }

@@ -4,6 +4,7 @@ import { CommunityController } from './community.controller';
 import { TypegooseModule } from 'nestjs-typegoose';
 import { CommunityModel } from './community.model';
 import { UserModel } from '../user/user.model';
+import { PostModel } from '../post/post.model';
 
 @Module({
 	controllers: [CommunityController],
@@ -17,6 +18,10 @@ import { UserModel } from '../user/user.model';
 			{
 				typegooseClass: UserModel,
 				schemaOptions: { collection: 'user' },
+			},
+			{
+				typegooseClass: PostModel,
+				schemaOptions: { collection: 'post' },
 			},
 		]),
 	],

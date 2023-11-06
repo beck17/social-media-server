@@ -1,10 +1,10 @@
-import { IsOptional, IsString } from 'class-validator'
+import { IsOptional, IsString } from 'class-validator';
 
 export class PostDto {
 	@IsString()
-	text: string
+	text: string;
 
 	@IsString()
 	@IsOptional()
-	image?: string
+	image?: string;
 }

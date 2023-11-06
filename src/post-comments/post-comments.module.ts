@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common'
-import { PostCommentsService } from './post-comments.service'
-import { PostCommentsController } from './post-comments.controller'
-import { TypegooseModule } from 'nestjs-typegoose'
-import { PostCommentsModel } from './post-comments.model'
-import { PostService } from '../post/post.service'
-import { PostModel } from '../post/post.model'
+import { Module } from '@nestjs/common';
+import { PostCommentsService } from './post-comments.service';
+import { PostCommentsController } from './post-comments.controller';
+import { TypegooseModule } from 'nestjs-typegoose';
+import { PostCommentsModel } from './post-comments.model';
+import { PostService } from '../post/post.service';
+import { PostModel } from '../post/post.model';
+import { CommunityModel } from '../community/community.model';
 
 @Module({
 	imports: [
@@ -16,6 +17,10 @@ import { PostModel } from '../post/post.model'
 			{
 				typegooseClass: PostModel,
 				schemaOptions: { collection: 'posts' },
+			},
+			{
+				typegooseClass: CommunityModel,
+				schemaOptions: { collection: 'community' },
 			},
 		]),
 	],

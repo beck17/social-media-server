@@ -28,5 +28,5 @@ export class CommunityModel extends TimeStamps {
 	admins: Ref<UserModel>[]; // Массив администраторов сообщества
 
 	@prop({ ref: () => PostModel, default: [] })
-	posts: Ref<PostModel>[]; // Массив публикаций сообщества
+	post: Ref<PostModel>[]; // Массив публикаций сообщества
 }

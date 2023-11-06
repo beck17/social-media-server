@@ -20,7 +20,9 @@ export class CommunityService {
 	}
 
 	async getOneCommunity(communityId: Types.ObjectId) {
-		return this.CommunityModel.findById(communityId);
+		return this.CommunityModel.findById(communityId)
+			.populate('posts', '_id name members communityAvatar')
+			.exec();
 	}
 
 	async getUserCommunities(userId: Types.ObjectId) {
