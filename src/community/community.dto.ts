@@ -7,4 +7,12 @@ export class CommunityDto {
 	@IsString()
 	@IsOptional()
 	description?: string;
+
+	@IsString()
+	@IsOptional()
+	communityAvatar?: string;
+
+	@IsString()
+	@IsOptional()
+	communityBackgroundPic?: string;
 }

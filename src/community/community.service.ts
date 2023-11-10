@@ -20,7 +20,9 @@ export class CommunityService {
 	}
 
 	async getOneCommunity(communityId: Types.ObjectId) {
-		return this.CommunityModel.findById(communityId);
+		return this.CommunityModel.findById(communityId)
+			.populate('posts', 'text image createdAt')
+			.exec();
 	}
 
 	async getUserCommunities(userId: Types.ObjectId) {
@@ -51,6 +53,9 @@ export class CommunityService {
 
 		if (dto.name) community.name = dto.name;
 		if (dto.description) community.description = dto.description;
+		if (dto.communityAvatar) community.communityAvatar = dto.communityAvatar;
+		if (dto.communityBackgroundPic)
+			community.communityBackgroundPic = dto.communityBackgroundPic;
 
 		return community.save();
 	}
