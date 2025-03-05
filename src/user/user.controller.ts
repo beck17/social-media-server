@@ -29,14 +29,14 @@ export class UserController {
 		return this.UserService.getProfile(new Types.ObjectId(userId))
 	}
 
-	@Post(':friendId')
+	@Post(':receiverId')
 	@Auth()
 	@HttpCode(200)
-	async addToFriend(
-		@CurrentUser('_id') userId: Types.ObjectId,
-		@Param('friendId') friendIs: Types.ObjectId,
+	async sendFriendRequest(
+		@CurrentUser('_id') senderId: Types.ObjectId,
+		@Param('receiverId') receiverId: Types.ObjectId,
 	) {
-		return this.UserService.addToFriend(userId, friendIs)
+		return this.UserService.sendFriendRequest(senderId, receiverId)
 	}
 
 	@Put(':friendId')
@@ -65,6 +65,24 @@ export class UserController {
 		@Param('friendId') friendId: Types.ObjectId,
 	) {
 		return this.UserService.isFriend(id, friendId)
+	}
+
+	@Get('requestFriend/:friendId')
+	@Auth()
+	async isSubscribe(
+		@CurrentUser('_id') id: Types.ObjectId,
+		@Param('friendId') friendId: Types.ObjectId,
+	) {
+		return this.UserService.isSubscribe(id, friendId)
+	}
+
+	@Put('unSubscribe/:friendId')
+	@Auth()
+	async unSubscribe(
+		@CurrentUser('_id') id: Types.ObjectId,
+		@Param('friendId') friendId: Types.ObjectId,
+	) {
+		return this.UserService.unSubscribe(id, friendId)
 	}
 
 	@Get('search/:search')

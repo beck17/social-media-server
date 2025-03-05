@@ -7,4 +7,6 @@ export interface IUser {
 	backgroundPic?: string
 	birthday?: string
 	friends: IUser[]
+	requestFriends: IUser[]
+	outgoingRequestFriends: IUser[]
 }

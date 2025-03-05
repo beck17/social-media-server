@@ -32,6 +32,12 @@ export class UserModel extends TimeStamps {
 	@prop({ default: [], ref: () => UserModel })
 	friends: Ref<UserModel>[];
 
+	@prop({ default: [], ref: () => UserModel })
+	requestFriends: Ref<UserModel>[];
+
+	@prop({ default: [], ref: () => UserModel })
+	outgoingRequestFriends: Ref<UserModel>[];
+
 	@prop({ default: [], ref: () => CommunityModel })
 	communities: Ref<CommunityModel>[];
 

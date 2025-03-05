@@ -10,7 +10,8 @@ export class UserService {
 	constructor(
 		@InjectModel(UserModel)
 		private readonly UserModel: ModelType<UserModel>,
-	) {}
+	) {
+	}
 
 	async getProfile(_id: Types.ObjectId) {
 		return this.UserModel.findById(_id)
@@ -38,23 +39,91 @@ export class UserService {
 		return user.save()
 	}
 
-	async addToFriend(userId: Types.ObjectId, friendId: Types.ObjectId) {
-		const user = await this.getById(userId)
-		const friend = await this.getById(friendId)
+	async sendFriendRequest(senderId: Types.ObjectId, receiverId: Types.ObjectId) {
+		const sender = await this.getById(senderId)
+		const receiver = await this.getById(receiverId)
 
-		user.friends = [...user.friends, friendId]
-		friend.friends = [...friend.friends, userId]
+		if (sender === receiver) throw new NotFoundException('Вы не можете отправить запрос на дружбу самому себе')
+		if (receiver.requestFriends.includes(sender._id)) throw new NotFoundException('Вы уже отправили запрос на дружбу')
+		if (receiver.friends.includes(sender._id)) throw new NotFoundException('Этот пользователь уже у вас в друзьях')
+
+
+		if (sender.requestFriends.includes(receiver._id)) return await this.acceptFriendRequest(sender.id, receiverId)
+
+		receiver.requestFriends.push(sender._id)
+		sender.outgoingRequestFriends.push(receiver._id)
+
+		await receiver.save()
+		await sender.save()
+
+		return receiver
+	}
+
+	async acceptFriendRequest(userId: Types.ObjectId, requesterId: Types.ObjectId) {
+		const user = await this.getById(userId)
+		const requester = await this.getById(requesterId)
+
+		if (
+			!user.requestFriends.includes(requester._id) && requester.outgoingRequestFriends.includes(user._id)
+		) throw new NotFoundException('Запрос на дружбу не найден')
+
+		await this.UserModel.findByIdAndUpdate(userId, {
+			$pull: {
+				requestFriends: requesterId,
+			},
+		})
+		await this.UserModel.findByIdAndUpdate(requesterId, {
+			$pull: {
+				outgoingRequestFriends: userId,
+			},
+		})
+
+		user.friends.push(requester._id)
+		requester.friends.push(user._id)
 
 		await user.save()
-		await friend.save()
+		await requester.save()
 
-		return true
+		return user
+	}
+
+	async unSubscribe(userId: Types.ObjectId, requesterId: Types.ObjectId) {
+		const user = await this.getById(userId)
+		const requester = await this.getById(requesterId)
+
+		if (
+			!requester.requestFriends.includes(user._id) && !user.outgoingRequestFriends.includes(requester._id)
+		) throw new NotFoundException('Запрос на дружбу не найден')
+
+		await this.UserModel.findByIdAndUpdate(userId, {
+			$pull: {
+				outgoingRequestFriends: requesterId,
+			},
+		})
+
+		await this.UserModel.findByIdAndUpdate(requesterId, {
+			$pull: {
+				requestFriends: userId,
+			},
+		})
+
+		await user.save()
+		await requester.save()
+
+		return user
 	}
 
 	async removeFromFriend(userId: Types.ObjectId, friendId: Types.ObjectId) {
+		const user = await this.getById(userId)
+
+		if (!user.friends.includes(friendId)) throw new NotFoundException('Пользователя нет в ваших друзьях')
+
 		await this.UserModel.findByIdAndUpdate(userId, {
 			$pull: {
 				friends: friendId,
+			},
+			$push: {
+				requestFriends: friendId,
 			},
 		})
 
@@ -62,15 +131,29 @@ export class UserService {
 			$pull: {
 				friends: userId,
 			},
+			$push: {
+				outgoingRequestFriends: userId,
+			},
 		})
 
-		return true
+		await user.save()
+
+		return user
 	}
 
 	async isFriend(userId: Types.ObjectId, friendId: Types.ObjectId) {
 		const user = await this.UserModel.findOne({
 			_id: userId,
 			friends: friendId,
+		})
+
+		return !!user
+	}
+
+	async isSubscribe(userId: Types.ObjectId, friendId: Types.ObjectId) {
+		const user = await this.UserModel.findOne({
+			_id: userId,
+			outgoingRequestFriends: friendId,
 		})
 
 		return !!user
