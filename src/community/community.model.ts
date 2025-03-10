@@ -19,7 +19,7 @@ export class CommunityModel extends TimeStamps {
 	communityBackgroundPic: string;
 
 	@prop({ ref: () => UserModel })
-	creator: Ref<UserModel>; // Связь с моделью пользователя (если необходимо)
+	creator: Ref<UserModel>; // Связь с моделью пользователя
 
 	@prop({ ref: () => UserModel, default: [] })
 	members: Ref<UserModel>[]; // Массив участников сообщества

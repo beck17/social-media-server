@@ -15,7 +15,7 @@ export class UserService {
 
 	async getProfile(_id: Types.ObjectId) {
 		return this.UserModel.findById(_id)
-			.populate('friends', 'firstName lastName avatar')
+			.populate('friends', 'firstName lastName avatar city birthday')
 			.exec()
 	}
 
