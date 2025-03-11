@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from 'nestjs-typegoose'
 import { MessageModel } from './message.model'
 import { ModelType } from '@typegoose/typegoose/lib/types'
@@ -12,7 +12,8 @@ export class MessageService {
 		@InjectModel(MessageModel)
 		private readonly MessageModel: ModelType<MessageModel>,
 		private readonly ConversationService: ConversationService,
-	) {}
+	) {
+	}
 
 	async getMessages(userFrom: Types.ObjectId, userTo: Types.ObjectId) {
 		return this.MessageModel.find({
@@ -28,6 +29,7 @@ export class MessageService {
 		userFrom: Types.ObjectId,
 		{ userTo, text, conversationId }: MessageDto,
 	) {
+		if (text === '') throw new BadRequestException('Сообщение пустое')
 		const newMessage = await this.MessageModel.create({
 			userTo,
 			userFrom,
