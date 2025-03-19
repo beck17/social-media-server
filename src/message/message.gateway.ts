@@ -14,13 +14,14 @@ export class MessageGateway {
 	constructor(
 		private readonly MessageService: MessageService,
 		private readonly ConversationService: ConversationService,
-	) {}
+	) {
+	}
 
 	@WebSocketServer()
 	server
 
 	@SubscribeMessage('message:get')
-	async getConversation(@MessageBody('conversationId') conversationId: string) {
+	async getConversation(@MessageBody('conversationId') conversationId: Types.ObjectId) {
 		const conversation = await this.ConversationService.getById(
 			new Types.ObjectId(conversationId),
 		)

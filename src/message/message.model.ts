@@ -1,8 +1,10 @@
-import { UserModel } from '../user/user.model'
 import { prop, Ref } from '@typegoose/typegoose'
 import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses'
+import { UserModel } from '../user/user.model'
+import { ConversationModel } from '../conversation/conversation.model'
 
-export interface MessageModel extends Base {}
+export interface MessageModel extends Base {
+}
 
 export class MessageModel extends TimeStamps {
 	@prop()
@@ -13,4 +15,10 @@ export class MessageModel extends TimeStamps {
 
 	@prop({ ref: () => UserModel })
 	userFrom: Ref<UserModel>
+
+	@prop({ default: false })
+	read: boolean
+
+	@prop({ ref: () => ConversationModel })
+	conversationId: Ref<ConversationModel>
 }

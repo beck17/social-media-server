@@ -18,7 +18,8 @@ export class AuthService {
 		@InjectModel(UserModel)
 		private readonly UserModel: ModelType<UserModel>,
 		private readonly JwtService: JwtService,
-	) {}
+	) {
+	}
 
 	async getNewTokens(refreshToken: string) {
 		const result = this.JwtService.verify(refreshToken)
@@ -42,7 +43,8 @@ export class AuthService {
 			throw new BadRequestException('Этот номер телефона уже занят')
 
 		const salt = await genSalt(10)
-		const newUser = await new this.UserModel({
+
+		const newUser = new this.UserModel({
 			phoneNumber: dto.phoneNumber,
 			firstName: dto.firstName,
 			lastName: dto.lastName,
@@ -50,6 +52,9 @@ export class AuthService {
 			avatar: '/uploads/default/no-avatar.jpg',
 			backgroundPic: '/uploads/default/background.jpg',
 			friends: [],
+			requestFriends: [],
+			outgoingRequestFriends: [],
+			communities: [],
 			postCount: 0,
 		})
 
@@ -103,6 +108,7 @@ export class AuthService {
 			_id: user._id,
 			firstName: user.firstName,
 			lastName: user.lastName,
+			city: user.city,
 			phoneNumber: user.phoneNumber,
 		}
 	}

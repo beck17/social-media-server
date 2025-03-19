@@ -9,10 +9,18 @@ import { CurrentUser } from '../auth/decorators/user.decorator'
 export class ConversationController {
 	constructor(private readonly ConversationService: ConversationService) {}
 
+
+
 	@Get('/:conversationId')
 	@Auth()
-	async getComments(@Param('conversationId') id: Types.ObjectId) {
+	async getConversationById(@Param('conversationId') id: Types.ObjectId) {
 		return this.ConversationService.getById(id)
+	}
+
+	@Get()
+	@Auth()
+	async getUserConversations(@CurrentUser('_id') userId: Types.ObjectId) {
+		return this.ConversationService.getUserConversations(userId)
 	}
 
 	@Post()

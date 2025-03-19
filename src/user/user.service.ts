@@ -15,7 +15,8 @@ export class UserService {
 
 	async getProfile(_id: Types.ObjectId) {
 		return this.UserModel.findById(_id)
-			.populate('friends', 'firstName lastName avatar city birthday')
+			.populate('friends', 'firstName lastName avatar city birthday friends createdAt')
+			.populate('requestFriends', 'firstName lastName avatar city birthday friends createdAt')
 			.exec()
 	}
 
@@ -170,7 +171,7 @@ export class UserService {
 				},
 			],
 		})
-			.select('firstName lastName avatar')
+			.select('firstName lastName avatar friends createdAt')
 			.sort('desc')
 			.exec()
 	}

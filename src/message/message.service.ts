@@ -30,10 +30,18 @@ export class MessageService {
 		{ userTo, text, conversationId }: MessageDto,
 	) {
 		if (text === '') throw new BadRequestException('Сообщение пустое')
+
+		let conversation = await this.ConversationService.getById(conversationId)
+
+		if (!conversation) {
+			await this.ConversationService.createConversation(userFrom, userTo)
+		}
+
 		const newMessage = await this.MessageModel.create({
 			userTo,
 			userFrom,
 			text,
+			conversationId,
 		})
 
 		return this.ConversationService.pushNewMessage(

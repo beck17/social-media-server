@@ -12,13 +12,40 @@ export class ConversationService {
 		private readonly ConversationModel: ModelType<ConversationModel>,
 		@InjectModel(MessageModel)
 		private readonly MessageModel: ModelType<MessageModel>,
-	) {}
+	) {
+	}
+
+	async getUserConversations(userId: Types.ObjectId) {
+		return this.ConversationModel.find({
+			participants: userId,
+			messages: {
+				$exists: true, $not: { $size: 0 },
+			},
+		})
+			.populate('participants', 'firstName lastName avatar')
+			.populate({
+				path: 'lastMessage',
+				select: 'text',
+				options: { sort: { createdAt: -1 } },
+			})
+			.sort({ lastMessageAt: -1 })
+			.exec()
+	}
 
 	async getById(id: Types.ObjectId) {
 		return this.ConversationModel.findById(id)
 			.populate({
 				path: 'messages',
-				populate: ['userFrom', 'userTo'],
+				populate: [
+					{
+						path: 'userFrom',
+						select: 'avatar',
+					},
+					{
+						path: 'userTo',
+						select: 'avatar',
+					},
+				],
 			})
 			.exec()
 	}
@@ -30,7 +57,6 @@ export class ConversationService {
 		})
 
 		if (!message) {
-			// @ts-ignore
 			message = await this.MessageModel.findOne({
 				userTo: withUserId,
 				userFrom: userId,
@@ -43,7 +69,9 @@ export class ConversationService {
 
 		return this.ConversationModel.create({
 			messages: [],
+			participants: [userId, withUserId],
 		})
+
 	}
 
 	async pushNewMessage(
@@ -56,6 +84,8 @@ export class ConversationService {
 		if (!conversation) throw new NotFoundException('Диалог не найден')
 
 		conversation.messages = [...conversation.messages, messageId]
+		conversation.lastMessage = messageId
+		conversation.lastMessageAt = new Date()
 
 		return conversation.save()
 	}
