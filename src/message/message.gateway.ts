@@ -15,10 +15,10 @@ import { MessageDto } from './message.dto'
 		origin: [
 			'http://localhost:3000',
 			'http://localhost:5000',
+			'https://social-media-client-yaiw.onrender.com',
 			'https://social-media-server-3gd5.onrender.com',
 		],
 	},
-	// transports: ['websocket'],
 })
 export class MessageGateway {
 	constructor(
