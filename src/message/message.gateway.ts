@@ -10,7 +10,10 @@ import { ConversationService } from '../conversation/conversation.service'
 import { Types } from 'mongoose'
 import { MessageDto } from './message.dto'
 
-@WebSocketGateway(8080, { cors: true })
+@WebSocketGateway({
+	cors: true,
+	transports: ['websocket'],
+})
 export class MessageGateway {
 	constructor(
 		private readonly MessageService: MessageService,
