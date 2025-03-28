@@ -11,8 +11,14 @@ import { Types } from 'mongoose'
 import { MessageDto } from './message.dto'
 
 @WebSocketGateway({
-	cors: true,
-	transports: ['websocket'],
+	cors: {
+		origin: [
+			'http://localhost:3000',
+			'http://localhost:5000',
+			'https://social-media-server-3gd5.onrender.com',
+		],
+	},
+	// transports: ['websocket'],
 })
 export class MessageGateway {
 	constructor(
