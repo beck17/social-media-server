@@ -43,11 +43,14 @@ export class CommunityService {
 				communityBackgroundPic: dto.communityBackgroundPic,
 				creator: userId,
 				numbers: userId,
+				posts: [],
 			})
 		} else {
 			return this.CommunityModel.create({
 				name: dto.name,
 				creator: userId,
+				numbers: userId,
+				posts: [],
 			})
 		}
 	}
