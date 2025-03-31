@@ -88,4 +88,13 @@ export class CommunityController {
 	) {
 		return this.CommunityService.isSubscribedUser(userId, communityId);
 	}
+
+	@Get('searchCommunities/:search')
+	@Auth()
+	async searchUserCommunities(
+		@CurrentUser('_id') id: Types.ObjectId,
+		@Param('search') search: string,
+	) {
+		return this.CommunityService.searchUserCommunities(id, search)
+	}
 }

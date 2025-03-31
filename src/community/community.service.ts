@@ -112,4 +112,28 @@ export class CommunityService {
 
 		return isSubscribed.length > 0
 	}
+
+	async searchUserCommunities(userId: Types.ObjectId, searchTerm: string) {
+		const user = await this.UserModel.findById(userId)
+			.select('communities')
+			.lean()
+			.exec()
+
+		if (!user || !user.communities?.length) {
+			return []
+		}
+
+		const query = {
+			_id: { $in: user.communities },
+			...(searchTerm && {
+				name: new RegExp(searchTerm, 'i'),
+			}),
+		}
+
+		return this.CommunityModel.find(query)
+			.select('name communityAvatar membersCount')
+			.sort({ createdAt: -1 })
+			.lean()
+			.exec()
+	}
 }
