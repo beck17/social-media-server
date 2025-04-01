@@ -15,7 +15,8 @@ import { UserDto } from './user.dto'
 
 @Controller('user')
 export class UserController {
-	constructor(private readonly UserService: UserService) {}
+	constructor(private readonly UserService: UserService) {
+	}
 
 	@Get('profile')
 	@Auth()
@@ -89,5 +90,23 @@ export class UserController {
 	@Auth()
 	async searchProfile(@Param('search') search: string) {
 		return this.UserService.searchProfile(search)
+	}
+
+	@Get('searchFriends/:search')
+	@Auth()
+	async searchFriends(
+		@CurrentUser('_id') id: Types.ObjectId,
+		@Param('search') search: string,
+	) {
+		return this.UserService.searchFriends(id, search)
+	}
+
+	@Get('searchSubscribers/:search')
+	@Auth()
+	async searchSubscribers(
+		@CurrentUser('_id') id: Types.ObjectId,
+		@Param('search') search: string,
+	) {
+		return this.UserService.searchSubscribers(id, search)
 	}
 }

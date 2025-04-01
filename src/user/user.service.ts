@@ -175,4 +175,62 @@ export class UserService {
 			.sort('desc')
 			.exec()
 	}
+
+	async searchFriends(userId: Types.ObjectId, searchTerm: string) {
+		const user = await this.UserModel.findById(userId)
+			.select('friends')
+			.lean()
+			.exec()
+
+		if (!user || !user.friends?.length) {
+			return []
+		}
+
+		const query = {
+			_id: { $in: user.friends },
+			...(searchTerm && {
+				$or: [
+					{
+						firstName: new RegExp(searchTerm, 'i'),
+					},
+					{
+						lastName: new RegExp(searchTerm, 'i'),
+					},
+				],
+			}),
+		}
+
+		return this.UserModel.find(query)
+			.lean()
+			.exec()
+	}
+
+	async searchSubscribers(userId: Types.ObjectId, searchTerm: string) {
+		const user = await this.UserModel.findById(userId)
+			.select('requestFriends')
+			.lean()
+			.exec()
+
+		if (!user || !user.requestFriends?.length) {
+			return []
+		}
+
+		const query = {
+			_id: { $in: user.requestFriends },
+			...(searchTerm && {
+				$or: [
+					{
+						firstName: new RegExp(searchTerm, 'i'),
+					},
+					{
+						lastName: new RegExp(searchTerm, 'i'),
+					},
+				],
+			}),
+		}
+
+		return this.UserModel.find(query)
+			.lean()
+			.exec()
+	}
 }
