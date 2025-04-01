@@ -131,7 +131,7 @@ export class CommunityService {
 		}
 
 		return this.CommunityModel.find(query)
-			.select('name communityAvatar membersCount')
+			.select('name communityAvatar members')
 			.sort({ createdAt: -1 })
 			.lean()
 			.exec()
