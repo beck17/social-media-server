@@ -89,4 +89,32 @@ export class ConversationService {
 
 		return conversation.save()
 	}
+
+	async searchUserConversation(userId: Types.ObjectId, searchTerm: string) {
+		const userConversations = await this.ConversationModel.find({
+			participants: userId,
+			messages: { $exists: true, $not: { $size: 0 } },
+		})
+			.populate({
+				path: 'participants',
+				match: {
+					_id: { $ne: userId },
+					...(searchTerm && {
+						$or: [
+							{ firstName: new RegExp(searchTerm, 'i') },
+							{ lastName: new RegExp(searchTerm, 'i') },
+						],
+					}),
+				},
+				select: 'firstName lastName avatar',
+			})
+			.populate({
+				path: 'lastMessage',
+				select: 'text',
+			})
+			.lean()
+			.exec()
+
+		return userConversations.filter(conv => conv.participants.length > 0)
+	}
 }

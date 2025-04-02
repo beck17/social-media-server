@@ -7,14 +7,23 @@ import { CurrentUser } from '../auth/decorators/user.decorator'
 
 @Controller('conversation')
 export class ConversationController {
-	constructor(private readonly ConversationService: ConversationService) {}
-
+	constructor(private readonly ConversationService: ConversationService) {
+	}
 
 
 	@Get('/:conversationId')
 	@Auth()
 	async getConversationById(@Param('conversationId') id: Types.ObjectId) {
 		return this.ConversationService.getById(id)
+	}
+
+	@Get('search/:searchTerm')
+	@Auth()
+	async searchUserConversation(
+		@CurrentUser() userId: Types.ObjectId,
+		@Param('searchTerm') search: string,
+	) {
+		return this.ConversationService.searchUserConversation(userId, search)
 	}
 
 	@Get()
