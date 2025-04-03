@@ -10,6 +10,7 @@ async function start() {
 	app.enableCors({
 		origin: [
 			'https://social-media-client-yaiw.onrender.com',
+			'https://netly-mu.vercel.app',
 			'http://localhost:3000'
 		],
 		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
