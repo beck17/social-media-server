@@ -17,6 +17,7 @@ import { MessageDto } from './message.dto'
 			'http://localhost:5000',
 			'https://social-media-client-yaiw.onrender.com',
 			'https://social-media-server-3gd5.onrender.com',
+			'https://netly-mu.vercel.app',
 		],
 	},
 })
