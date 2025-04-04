@@ -27,6 +27,14 @@ export class PostController {
 	}
 
 	@Auth()
+	@Get('/feed')
+	async getUserFeed(
+		@CurrentUser('_id') userId: Types.ObjectId,
+	) {
+		return this.PostService.getUserFeed(userId)
+	}
+
+	@Auth()
 	@Get('/user/:userId')
 	async getUserPosts(@Param('userId') userId: Types.ObjectId) {
 		return this.PostService.getUserPosts(userId)

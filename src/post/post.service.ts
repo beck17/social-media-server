@@ -4,13 +4,20 @@ import { PostModel } from './post.model'
 import { ModelType } from '@typegoose/typegoose/lib/types'
 import { PostDto } from './post.dto'
 import { Types } from 'mongoose'
+import { UserModel } from '../user/user.model'
+import { CommunityPostModel } from '../community-post/community-post.model'
 
 @Injectable()
 export class PostService {
 	constructor(
 		@InjectModel(PostModel)
 		private readonly PostModel: ModelType<PostModel>,
-	) {}
+		@InjectModel(UserModel)
+		private readonly UserModel: ModelType<UserModel>,
+		@InjectModel(CommunityPostModel)
+		private readonly CommunityPostModel: ModelType<CommunityPostModel>,
+	) {
+	}
 
 	async getAllPosts() {
 		return this.PostModel.find()
@@ -18,6 +25,38 @@ export class PostService {
 			.populate('user', 'firstName lastName avatar')
 			.populate('comments', '_id')
 			.exec()
+	}
+
+	async getUserFeed(userId: Types.ObjectId) {
+		const user = await this.UserModel.findById(userId)
+
+		if (!user) {
+			throw new NotFoundException('Пользователь не найден')
+		}
+
+		const userPosts = await this.PostModel.find({
+			user: {
+				$in: [userId,
+					...user.friends,
+					...user.outgoingRequestFriends],
+			},
+		})
+			.sort({ createdAt: -1 })
+			.populate('user', 'firstName lastName avatar')
+			.populate('comments', '_id')
+			.exec()
+
+		const communityPosts = await this.CommunityPostModel.find({
+			community: {
+				$in: user.communities,
+			},
+		})
+			.sort({ createdAt: -1 })
+			.populate('community', 'name communityAvatar')
+			.exec()
+
+		return [...userPosts, ...communityPosts]
+			.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 	}
 
 	async getUserPosts(userId: Types.ObjectId) {
