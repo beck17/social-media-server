@@ -82,7 +82,7 @@ export class AuthService {
 		if (!user) throw new UnauthorizedException('Неверный номер или пароль')
 
 		const isValidPassword = await compare(dto.password, user.password)
-		if (!isValidPassword) new UnauthorizedException('Неверный номер или пароль')
+		if (!isValidPassword) throw new UnauthorizedException('Неверный номер или пароль')
 
 		return user
 	}
