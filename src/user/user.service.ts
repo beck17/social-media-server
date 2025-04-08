@@ -20,6 +20,12 @@ export class UserService {
 			.exec()
 	}
 
+	async getNameAndAvatarProfile(_id: Types.ObjectId) {
+		return this.UserModel.findById(_id)
+			.select('firstName avatar')
+			.exec()
+	}
+
 	async getById(id: Types.ObjectId) {
 		const user = await this.UserModel.findById(id).exec()
 		if (!user) throw new NotFoundException('Профиля не существует')

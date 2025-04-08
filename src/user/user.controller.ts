@@ -30,6 +30,14 @@ export class UserController {
 		return this.UserService.getProfile(new Types.ObjectId(userId))
 	}
 
+	@Get('profile-name')
+	@Auth()
+	async getNameAndAvatarProfile(
+		@CurrentUser('_id') userId: Types.ObjectId,
+	) {
+		return this.UserService.getNameAndAvatarProfile(userId)
+	}
+
 	@Post(':receiverId')
 	@Auth()
 	@HttpCode(200)
