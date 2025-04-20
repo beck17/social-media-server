@@ -5,6 +5,9 @@ export class CommunityDto {
 	name: string;
 
 	@IsString()
+	genre: string;
+
+	@IsString()
 	@IsOptional()
 	description?: string;
 

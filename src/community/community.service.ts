@@ -28,30 +28,43 @@ export class CommunityService {
 
 	async getUserCommunities(userId: Types.ObjectId) {
 		const { communities } = await this.UserModel.findById(userId)
-			.populate('communities', '_id name members communityAvatar')
+			.populate('communities', '_id name members communityAvatar genre')
 			.exec()
 
 		return communities
 	}
 
 	async createCommunity(userId: Types.ObjectId, dto: CommunityDto) {
+		const user = await this.UserModel.findById(userId)
 		if (dto.description) {
-			return this.CommunityModel.create({
+			const community = await this.CommunityModel.create({
 				name: dto.name,
+				genre: dto.genre,
 				description: dto.description,
 				communityAvatar: dto.communityAvatar,
 				communityBackgroundPic: dto.communityBackgroundPic,
 				creator: userId,
-				numbers: userId,
+				members: [userId],
 				posts: [],
 			})
+
+			user.communities.push(community._id)
+			await user.save()
+
+			return community
 		} else {
-			return this.CommunityModel.create({
+			const community = await this.CommunityModel.create({
 				name: dto.name,
+				genre: dto.genre,
 				creator: userId,
-				numbers: userId,
+				members: [userId],
 				posts: [],
 			})
+
+			user.communities.push(community._id)
+			await user.save()
+
+			return community
 		}
 	}
 
@@ -98,7 +111,7 @@ export class CommunityService {
 		return this.CommunityModel.find({
 			$or: [{ name: new RegExp(search, 'i') }],
 		})
-			.select('name communityAvatar members')
+			.select('name communityAvatar members genre')
 			.sort('desc')
 			.exec()
 	}
@@ -131,7 +144,7 @@ export class CommunityService {
 		}
 
 		return this.CommunityModel.find(query)
-			.select('name communityAvatar members')
+			.select('name communityAvatar members genre')
 			.sort({ createdAt: -1 })
 			.lean()
 			.exec()

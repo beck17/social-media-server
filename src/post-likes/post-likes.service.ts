@@ -21,8 +21,7 @@ export class PostLikesService {
 	}
 
 	async getCount(postId: Types.ObjectId) {
-		const count = await this.PostLikeModel.find({ post: postId }).exec()
-		return count.length
+		return await this.PostLikeModel.count({ post: postId }).exec()
 	}
 
 	async toggleLike(userId: Types.ObjectId, { postId }: PostLikeDto) {
